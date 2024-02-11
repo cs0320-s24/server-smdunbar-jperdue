@@ -2,10 +2,13 @@ package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.StateCodes;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
 import edu.brown.cs.student.main.handlers.SearchHandler;
 import edu.brown.cs.student.main.handlers.ViewHandler;
+import java.net.URISyntaxException;
+import java.util.Map;
 import spark.Spark;
 
 /**
@@ -14,7 +17,7 @@ import spark.Spark;
  * credit: gear up code
  */
 public class Server {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws URISyntaxException {
     int port = 3232;
     Spark.port(port);
     after(
@@ -36,11 +39,12 @@ public class Server {
 //      System.err.println("Errored while deserializing the menu");
 //    }
 
+    StateCodes stateMap = new StateCodes();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler());
     Spark.get("loadcsv", new LoadHandler());
     Spark.get("viewcsv", new ViewHandler());
-    Spark.get("broadband", new BroadbandHandler());
+    Spark.get("broadband", new BroadbandHandler(stateMap));
 
     Spark.init();
     Spark.awaitInitialization();
