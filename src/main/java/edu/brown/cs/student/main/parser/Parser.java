@@ -26,6 +26,7 @@ public class Parser<T> {
     this.strategy = strategy;
   }
 
+
   /**
    * Parse method to read lines of reader and create an ArrayList of type T, corresponding with the
    * Strategy provided by the user. Catches IO exceptions if necessary as well as

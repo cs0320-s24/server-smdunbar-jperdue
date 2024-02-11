@@ -85,10 +85,8 @@ public class UtilitySearch {
 
     } catch (FileNotFoundException e) {
       System.out.println(
-          "File: "
-              + filePath
-              + "was not found. Try again using a different file path.\n"
-              + "Additionally, make sure your desired file is in the data directory.");
+          "File: " + filePath + "was not found. Try again using a different file path.\n" +
+              "Additionally, make sure your desired file is in the data directory.");
     } catch (InvalidQueryException e) {
       System.out.println("Input query encountered the following error: ");
       System.out.println(e.getMessage());
