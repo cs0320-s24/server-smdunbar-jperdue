@@ -1,16 +1,23 @@
 package edu.brown.cs.student.main;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class StateCodes {
 
-  private final HashMap<String, Integer> codes = new HashMap();
+  private final List<StateCodePair> codes = new StateCodePair();
 
   public StateCodes() throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildStateListRequest =
@@ -30,7 +37,7 @@ public class StateCodes {
     System.out.println(stateListResponse);
     System.out.println(stateListResponse.body());
 
-    stateListResponse.body();
+    this.stateCodes = deserializeStates(stateListResponse.body());
   }
 
   public int getCode(String state) {
@@ -39,4 +46,6 @@ public class StateCodes {
     }
     throw new IllegalArgumentException("State " + state + " does not exist");
   }
+
 }
+
