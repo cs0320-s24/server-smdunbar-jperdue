@@ -43,7 +43,7 @@ public class StateCodes {
   public int getCode(String state) {
     for (StateCodePair pair : this.codes) {
       if (pair.getState().equals(state)) {
-        return pair.getCode();
+        return pair.getStateCode();
       }
     }
     throw new IllegalArgumentException("State " + state + " does not exist");

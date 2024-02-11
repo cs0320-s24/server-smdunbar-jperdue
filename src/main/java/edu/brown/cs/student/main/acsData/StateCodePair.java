@@ -20,7 +20,7 @@ public class StateCodePair {
      * Getter for code
      * @return int code
      */
-    public int getCode() {
+    public int getStateCode() {
         return code;
     }
 
