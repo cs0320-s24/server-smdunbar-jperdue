@@ -41,8 +41,10 @@ public class StateCodes {
   }
 
   public int getCode(String state) {
-    if (codes.containsKey(state)) {
-      return codes.get(state);
+    for (StateCodePair pair : this.codes) {
+      if (pair.getState().equals(state)) {
+        return pair.getCode();
+      }
     }
     throw new IllegalArgumentException("State " + state + " does not exist");
   }

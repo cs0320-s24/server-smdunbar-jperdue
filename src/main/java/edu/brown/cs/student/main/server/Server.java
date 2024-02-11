@@ -7,6 +7,8 @@ import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
 import edu.brown.cs.student.main.handlers.SearchHandler;
 import edu.brown.cs.student.main.handlers.ViewHandler;
+
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import spark.Spark;
@@ -17,7 +19,7 @@ import spark.Spark;
  * credit: gear up code
  */
 public class Server {
-  public static void main(String[] args) throws URISyntaxException {
+  public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
     int port = 3232;
     Spark.port(port);
     after(
