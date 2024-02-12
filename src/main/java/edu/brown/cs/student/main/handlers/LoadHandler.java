@@ -45,6 +45,7 @@ public class LoadHandler implements Route {
         ArrayList<List<String>> data = parser.parse();
         this.state.setCsvData(data);
         this.state.setFilepath(request.queryParams("filepath"));
+        this.state.setHeaders(Boolean.parseBoolean(request.queryParams("headers")));
 
         return new LoadSuccessResponse("Provided File Loaded Successfully").serialize();
 

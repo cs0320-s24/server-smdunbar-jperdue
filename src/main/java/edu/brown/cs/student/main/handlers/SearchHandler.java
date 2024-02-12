@@ -3,12 +3,16 @@ package edu.brown.cs.student.main.handlers;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.search.InvalidQueryException;
+import edu.brown.cs.student.main.search.UtilitySearch;
 import edu.brown.cs.student.main.server.ServerState;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +32,40 @@ public class SearchHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    List<List<String>> data = this.state.getCsvData();
+    ArrayList<List<String>> data = this.state.getCsvData();
+    boolean headers = this.state.getHeaders();
 
     if (data != null){
       String query = request.queryParams("query");
       String column = request.queryParams("column");
-      String index = request.queryParams("index");
+      if (query != null){
+        if (column != null){
+          try { // when column identifier is provided
+            List<List<String>> results = UtilitySearch.query(data, query, headers, Integer.parseInt(column));
+            return new SearchSuccessResponse(results);
+          } catch (NumberFormatException e) {
+            List<List<String>> results = UtilitySearch.query(data, query, headers, column);
+            return new SearchSuccessResponse(results);
+          } catch (InvalidQueryException e) {
+            return new SearchFailureResponse(e.getMessage());
+          }
+        } else { // when no column identifier is provided
+          try {
+            List<List<String>> results = UtilitySearch.query(data, query, headers);
+            return new SearchSuccessResponse(results);
+          } catch (InvalidQueryException e) {
+            return new SearchFailureResponse(e.getMessage());
+          }
+        }
 
 
+
+
+      } else {
+        return new SearchFailureResponse("No query provided. Provide a query to search your data.");
+      }
+    } else {
+      return new SearchFailureResponse("No CSV loaded. Please Load before Searching.");
     }
 
 

@@ -5,8 +5,10 @@ import java.util.List;
 
 public class ServerState {
 
-    private List<List<String>> csvData;
+    private ArrayList<List<String>> csvData;
     private String filepath;
+
+    private boolean headers;
 
     /**
      * Constructor for state does nothing. Will set values in their own methods
@@ -25,9 +27,15 @@ public class ServerState {
      * Takes input parsed csvData and assigns it to the state
      * @param csvData list<list<string>> parsed data
      */
-    public void setCsvData(List<List<String>> csvData){
+    public void setCsvData(ArrayList<List<String>> csvData){
         this.csvData = csvData;
     }
+
+    /**
+     * Takes input and sets headers as provided value
+     * @param headers boolean true means the data has headers
+     */
+    public void setHeaders(boolean headers) {this.headers = headers;}
 
     /**
      * Getter for filepath string
@@ -41,8 +49,16 @@ public class ServerState {
      * Returns csv data
      * @return csv data field
      */
-    public List<List<String>> getCsvData(){
+    public ArrayList<List<String>> getCsvData(){
         return this.csvData;
+    }
+
+    /**
+     * Returns boolean headers
+     * @return boolean headers
+     */
+    public boolean getHeaders() {
+        return this.headers;
     }
 
     /**
@@ -51,6 +67,7 @@ public class ServerState {
     public void clearData(){
         this.filepath = null;
         this.csvData = null;
+        this.headers = false;
     }
 
 }
