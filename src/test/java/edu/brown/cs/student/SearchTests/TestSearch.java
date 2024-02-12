@@ -144,5 +144,4 @@ public class TestSearch {
 
     Assert.assertEquals(results, new ArrayList<>());
   }
-
 }

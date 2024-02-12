@@ -11,7 +11,8 @@ import spark.Route;
 public class BroadbandHandler implements Route {
 
   private final StateCodes stateCodes;
-  public BroadbandHandler(StateCodes stateCodes){
+
+  public BroadbandHandler(StateCodes stateCodes) {
     this.stateCodes = stateCodes;
   }
 
@@ -31,10 +32,10 @@ public class BroadbandHandler implements Route {
       // Sends a request to the API and receives JSON back
       String broadbandJson = this.sendRequest(stateCode);
       // Deserializes JSON into an Activity
-      //Activity activity = ActivityAPIUtilities.deserializeActivity(activityJson);
+      // Activity activity = ActivityAPIUtilities.deserializeActivity(activityJson);
       // Adds results to the responseMap
       responseMap.put("result", "success");
-      //responseMap.put("activity", activity);
+      // responseMap.put("activity", activity);
       return responseMap;
     } catch (Exception e) {
       e.printStackTrace();

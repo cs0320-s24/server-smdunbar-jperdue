@@ -1,4 +1,4 @@
-package edu.brown.cs.student.ParserTests;
+package edu.brown.cs.student.SearchTests;
 
 import edu.brown.cs.student.main.parser.Parser;
 import edu.brown.cs.student.main.parser.creatorTypes.Person;
@@ -93,5 +93,4 @@ public class TestParser {
     Assert.assertEquals(strings.get(0).size(), 3);
     Assert.assertEquals(strings.get(0).get(0), "John");
   }
-
 }
