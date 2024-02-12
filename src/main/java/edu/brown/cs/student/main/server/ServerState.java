@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ServerState {
 
-    private ArrayList<List<String>> csvData;
+    private List<List<String>> csvData;
     private String filepath;
 
     /**
@@ -25,7 +25,7 @@ public class ServerState {
      * Takes input parsed csvData and assigns it to the state
      * @param csvData list<list<string>> parsed data
      */
-    public void setCsvData(ArrayList<List<String>> csvData){
+    public void setCsvData(List<List<String>> csvData){
         this.csvData = csvData;
     }
 
@@ -41,7 +41,7 @@ public class ServerState {
      * Returns csv data
      * @return csv data field
      */
-    public ArrayList<List<String>> getCsvData(){
+    public List<List<String>> getCsvData(){
         return this.csvData;
     }
 

@@ -45,7 +45,7 @@ public class Server {
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
-    Spark.get("searchcsv", new SearchHandler());
+    Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler());
     Spark.get("broadband", new BroadbandHandler(stateMap));
