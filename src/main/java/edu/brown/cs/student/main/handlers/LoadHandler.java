@@ -46,15 +46,15 @@ public class LoadHandler implements Route {
         this.state.setCsvData(data);
         this.state.setFilepath(request.queryParams("filepath"));
 
-        return null; // will return success response here
+        return new LoadSuccessResponse("Provided File Loaded Successfully").serialize();
 
       } catch (FileNotFoundException e){
 
-        return null; //return failure response here
+        return new LoadFailureResponse("Provided file not found").serialize();
 
       }
     }
-      return null; // return failure response here
+      return new LoadFailureResponse("No filepath provided for loadcsv");
   }
 
   /**
@@ -107,7 +107,7 @@ public class LoadHandler implements Route {
      * @param message message to send with success
      */
     public LoadFailureResponse(String message){
-      this("failure",message);
+      this("failure", "Error encountered while loading file: " + message);
     }
 
     /**
