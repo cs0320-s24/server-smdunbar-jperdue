@@ -42,9 +42,11 @@ public class Server {
 //    }
 
     StateCodes stateMap = new StateCodes();
+
+    ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler());
-    Spark.get("loadcsv", new LoadHandler());
+    Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler());
     Spark.get("broadband", new BroadbandHandler(stateMap));
 
