@@ -68,6 +68,7 @@ public class LoadHandler implements Route {
     }
 
     String serialize(){
+      return null;
 
     }
 
