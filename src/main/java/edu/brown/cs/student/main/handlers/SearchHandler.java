@@ -43,12 +43,23 @@ public class SearchHandler implements Route {
           try { // when column identifier is provided
             List<List<String>> results = UtilitySearch.query(data, query, headers, Integer.parseInt(column));
             return new SearchSuccessResponse(results);
+
+
           } catch (NumberFormatException e) {
-            List<List<String>> results = UtilitySearch.query(data, query, headers, column);
-            return new SearchSuccessResponse(results);
+            try { // when column identifier is not an integer but rather a name
+              List<List<String>> results = UtilitySearch.query(data, query, headers);
+              return new SearchSuccessResponse(results);
+            } catch (InvalidQueryException iqe) {
+              return new SearchFailureResponse(iqe.getMessage());
+            }
+
+
           } catch (InvalidQueryException e) {
             return new SearchFailureResponse(e.getMessage());
           }
+
+
+
         } else { // when no column identifier is provided
           try {
             List<List<String>> results = UtilitySearch.query(data, query, headers);
@@ -67,19 +78,6 @@ public class SearchHandler implements Route {
     } else {
       return new SearchFailureResponse("No CSV loaded. Please Load before Searching.");
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    return null;
   }
 
 
