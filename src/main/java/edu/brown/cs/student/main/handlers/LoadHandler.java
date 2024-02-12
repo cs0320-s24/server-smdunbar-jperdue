@@ -34,6 +34,12 @@ public class LoadHandler implements Route {
   }
 
 
+  /**
+   * Handler for a load request
+   * @param request request object
+   * @param response response object
+   * @return request object
+   */
   @Override
   public Object handle(Request request, Response response) {
 
@@ -55,7 +61,7 @@ public class LoadHandler implements Route {
 
       }
     }
-      return new LoadFailureResponse("No filepath provided for loadcsv");
+      return new LoadFailureResponse("No filepath provided for loadcsv").serialize();
   }
 
   /**

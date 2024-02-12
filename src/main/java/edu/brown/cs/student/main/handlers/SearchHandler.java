@@ -29,33 +29,39 @@ public class SearchHandler implements Route {
     this.state = state;
   }
 
+  /**
+   * Handler for a search request
+   * @param request request object
+   * @param response response object
+   * @return request object
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
     ArrayList<List<String>> data = this.state.getCsvData();
     boolean headers = this.state.getHeaders();
 
-    if (data != null){
+    if (data != null){ // ensures load request has already been made
       String query = request.queryParams("query");
       String column = request.queryParams("column");
       if (query != null){
         if (column != null){
-          try { // when column identifier is provided
+          try { // when column identifier is provided and it's an integer
             List<List<String>> results = UtilitySearch.query(data, query, headers, Integer.parseInt(column));
-            return new SearchSuccessResponse(results);
+            return new SearchSuccessResponse(results).serialize();
 
 
           } catch (NumberFormatException e) {
             try { // when column identifier is not an integer but rather a name
               List<List<String>> results = UtilitySearch.query(data, query, headers);
-              return new SearchSuccessResponse(results);
+              return new SearchSuccessResponse(results).serialize();
             } catch (InvalidQueryException iqe) {
-              return new SearchFailureResponse(iqe.getMessage());
+              return new SearchFailureResponse(iqe.getMessage()).serialize();
             }
 
 
           } catch (InvalidQueryException e) {
-            return new SearchFailureResponse(e.getMessage());
+            return new SearchFailureResponse(e.getMessage()).serialize();
           }
 
 
@@ -63,9 +69,9 @@ public class SearchHandler implements Route {
         } else { // when no column identifier is provided
           try {
             List<List<String>> results = UtilitySearch.query(data, query, headers);
-            return new SearchSuccessResponse(results);
+            return new SearchSuccessResponse(results).serialize();
           } catch (InvalidQueryException e) {
-            return new SearchFailureResponse(e.getMessage());
+            return new SearchFailureResponse(e.getMessage()).serialize();
           }
         }
 
@@ -73,10 +79,10 @@ public class SearchHandler implements Route {
 
 
       } else {
-        return new SearchFailureResponse("No query provided. Provide a query to search your data.");
+        return new SearchFailureResponse("No query provided. Provide a query to search your data.").serialize();
       }
     } else {
-      return new SearchFailureResponse("No CSV loaded. Please Load before Searching.");
+      return new SearchFailureResponse("No CSV loaded. Please Load before Searching.").serialize();
     }
   }
 
@@ -105,7 +111,7 @@ public class SearchHandler implements Route {
       // Instead of taking in map, build map given result and message then serialize
       Map<String, Object> responseMap = new HashMap<>();
       responseMap.put("result", this.type);
-      responseMap.put("message", this.data);
+      responseMap.put("data", this.data);
       Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
 
       try {
