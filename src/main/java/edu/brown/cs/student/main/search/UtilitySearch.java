@@ -13,7 +13,9 @@ public class UtilitySearch {
    * @param query String value to search for within CSV
    * @param headers whether the input CSV file has headers
    */
-  public static List<List<String>> query(ArrayList<List<String>> data, String query, Boolean headers) throws FileNotFoundException, InvalidQueryException {
+  public static List<List<String>> query(
+      ArrayList<List<String>> data, String query, Boolean headers)
+      throws FileNotFoundException, InvalidQueryException {
 
     Search search = new Search(data, headers, query);
     return search.search();

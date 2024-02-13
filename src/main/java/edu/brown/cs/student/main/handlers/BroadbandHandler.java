@@ -1,6 +1,12 @@
 package edu.brown.cs.student.main.handlers;
 
 import edu.brown.cs.student.main.acsData.StateCodes;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +28,6 @@ public class BroadbandHandler implements Route {
     //     System.out.println(params);
     String state = request.queryParams("state");
     String county = request.queryParams("county");
-    //     System.out.println(participants);
 
     int stateCode = stateCodes.getCode(state);
 
@@ -30,12 +35,12 @@ public class BroadbandHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     try {
       // Sends a request to the API and receives JSON back
-      String broadbandJson = this.sendRequest(stateCode);
+      String broadbandJson = this.sendRequest(stateCode, county);
       // Deserializes JSON into an Activity
-      // Activity activity = ActivityAPIUtilities.deserializeActivity(activityJson);
+      StateInfo stateInfo = StateInfoUtilities.deserializeStateInfo(broadbandJson);
       // Adds results to the responseMap
       responseMap.put("result", "success");
-      // responseMap.put("activity", activity);
+      responseMap.put("broadband", stateInfo);
       return responseMap;
     } catch (Exception e) {
       e.printStackTrace();
@@ -47,7 +52,28 @@ public class BroadbandHandler implements Route {
     return responseMap;
   }
 
-  private String sendRequest(int parseInt) {
-    return "";
+  private String sendRequest(int code, String county)
+      throws URISyntaxException, IOException, InterruptedException {
+    HttpRequest buildApiRequest =
+        HttpRequest.newBuilder()
+            .uri(
+                new URI(
+                    "https://api.census.gov/data/2010/dec/sf1?get=NAME,S2802_C03_022EE&for=county:"
+                        + county
+                        + "&in=state:"
+                        + code))
+            .GET()
+            .build();
+
+    // Send that API request then store the response in this variable. Note the generic type.
+    HttpResponse<String> sentApiResponse =
+        HttpClient.newBuilder().build().send(buildApiRequest, HttpResponse.BodyHandlers.ofString());
+
+    // What's the difference between these two lines? Why do we return the body? What is useful from
+    // the raw response (hint: how can we use the status of response)?
+    System.out.println(sentApiResponse);
+    System.out.println(sentApiResponse.body());
+
+    return sentApiResponse.body();
   }
 }
