@@ -1,19 +1,24 @@
-package edu.brown.cs.student.main.handlers;
+package edu.brown.cs.student.main.acsData;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StateInfoUtilities {
-  public static StateInfo deserializeStateInfo(String json) {
+  public static List deserializeStateInfo(String json) {
     try {
       // Initializes Moshi
       Moshi moshi = new Moshi.Builder().build();
 
       // Initializes an adapter to an Activity class then uses it to parse the JSON.
-      JsonAdapter<StateInfo> adapter = moshi.adapter(StateInfo.class);
+      Type listType = Types.newParameterizedType(List.class, List.class);
+      JsonAdapter<List<List>> adapter = moshi.adapter(listType);
 
-      StateInfo stateInfo = adapter.fromJson(json);
+      List<List> stateInfo = adapter.fromJson(json);
 
       return stateInfo;
     }
@@ -22,7 +27,7 @@ public class StateInfoUtilities {
     // the error instead of pushing it up.
     catch (IOException e) {
       e.printStackTrace();
-      return new StateInfo();
+      return new ArrayList();
     }
   }
 }

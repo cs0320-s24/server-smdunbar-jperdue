@@ -33,10 +33,10 @@ public class StateCodes {
     this.codes = deserializeStates(stateListResponse.body());
   }
 
-  public int getCode(String state) {
+  public String getCode(String state) {
     for (List<String> list : this.codes) {
       if (list.get(0).equals(state)) {
-        return Integer.parseInt(list.get(1));
+        return list.get(1);
       }
     }
     throw new IllegalArgumentException("State " + state + " does not exist");

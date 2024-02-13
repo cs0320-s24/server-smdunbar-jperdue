@@ -1,6 +1,7 @@
 package edu.brown.cs.student.main.handlers;
 
 import edu.brown.cs.student.main.acsData.StateCodes;
+import edu.brown.cs.student.main.acsData.StateInfoUtilities;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import spark.Request;
@@ -31,7 +33,7 @@ public class BroadbandHandler implements Route {
     System.out.println(state);
     System.out.println(county);
 
-    int stateCode = stateCodes.getCode(state);
+    String stateCode = stateCodes.getCode(state);
     System.out.println(stateCode);
 
     // Creates a hashmap to store the results of the request
@@ -40,10 +42,10 @@ public class BroadbandHandler implements Route {
       // Sends a request to the API and receives JSON back
       String broadbandJson = this.sendRequest(stateCode, county);
       // Deserializes JSON into an Activity
-      StateInfo stateInfo = StateInfoUtilities.deserializeStateInfo(broadbandJson);
+      List<List> stateInfo = StateInfoUtilities.deserializeStateInfo(broadbandJson);
       // Adds results to the responseMap
       responseMap.put("result", "success");
-      responseMap.put("broadband", stateInfo);
+      responseMap.put("broadband", stateInfo.get(1).get(1));
       return responseMap;
     } catch (Exception e) {
       e.printStackTrace();
@@ -55,7 +57,7 @@ public class BroadbandHandler implements Route {
     return responseMap;
   }
 
-  private String sendRequest(int code, String county)
+  private String sendRequest(String code, String county)
       throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildApiRequest =
         HttpRequest.newBuilder()
