@@ -47,7 +47,6 @@ public class Search {
     if (headers) { // If headers provided remove header line and search based on provided
       // identifiers
       List<String> colNames = this.fullData.get(0);
-      this.fullData.remove(colNames);
 
       if (this.colName != null) {
         if (!colNames.contains(this.colName)) {

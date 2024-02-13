@@ -2,8 +2,6 @@ package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
-import edu.brown.cs.student.main.acsData.StateCodes;
-import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
 import edu.brown.cs.student.main.handlers.SearchHandler;
 import edu.brown.cs.student.main.handlers.ViewHandler;
@@ -40,14 +38,14 @@ public class Server {
     //      System.err.println("Errored while deserializing the menu");
     //    }
 
-    StateCodes stateMap = new StateCodes();
+    //    StateCodes stateMap = new StateCodes();
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-    Spark.get("broadband", new BroadbandHandler(stateMap));
+    //    Spark.get("broadband", new BroadbandHandler(stateMap));
 
     Spark.init();
     Spark.awaitInitialization();
