@@ -49,11 +49,14 @@ public class SearchHandler implements Route {
           try { // when column identifier is provided and it's an integer
             List<List<String>> results =
                 UtilitySearch.query(data, query, headers, Integer.parseInt(column));
+            System.out.println(results);
             return new SearchSuccessResponse(results).serialize();
 
           } catch (NumberFormatException e) {
+
             try { // when column identifier is not an integer but rather a name
-              List<List<String>> results = UtilitySearch.query(data, query, headers);
+              List<List<String>> results = UtilitySearch.query(data, query, headers, column);
+              System.out.println(results);
               return new SearchSuccessResponse(results).serialize();
             } catch (InvalidQueryException iqe) {
               return new SearchFailureResponse(iqe.getMessage()).serialize();
@@ -66,6 +69,7 @@ public class SearchHandler implements Route {
         } else { // when no column identifier is provided
           try {
             List<List<String>> results = UtilitySearch.query(data, query, headers);
+            System.out.println(results);
             return new SearchSuccessResponse(results).serialize();
           } catch (InvalidQueryException e) {
             return new SearchFailureResponse(e.getMessage()).serialize();
