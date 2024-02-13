@@ -25,11 +25,14 @@ public class BroadbandHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
     Set<String> params = request.queryParams();
-    //     System.out.println(params);
+    System.out.println(params);
     String state = request.queryParams("state");
     String county = request.queryParams("county");
+    System.out.println(state);
+    System.out.println(county);
 
     int stateCode = stateCodes.getCode(state);
+    System.out.println(stateCode);
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
@@ -60,7 +63,7 @@ public class BroadbandHandler implements Route {
                 new URI(
                     "https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"
                         + county
-                        + "&in=state:06"
+                        + "&in=state:"
                         + code))
             .GET()
             .build();

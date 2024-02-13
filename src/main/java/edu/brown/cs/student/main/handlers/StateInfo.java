@@ -8,4 +8,9 @@ public class StateInfo {
   private int county;
 
   public StateInfo() {}
+
+  @Override
+  public String toString() {
+    return "" + this.broadband;
+  }
 }

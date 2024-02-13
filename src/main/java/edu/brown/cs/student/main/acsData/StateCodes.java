@@ -36,7 +36,7 @@ public class StateCodes {
   public int getCode(String state) {
     for (List<String> list : this.codes) {
       if (list.get(0).equals(state)) {
-        return Integer.parseInt(list.get(0));
+        return Integer.parseInt(list.get(1));
       }
     }
     throw new IllegalArgumentException("State " + state + " does not exist");
