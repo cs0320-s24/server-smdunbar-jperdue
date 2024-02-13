@@ -58,9 +58,9 @@ public class BroadbandHandler implements Route {
         HttpRequest.newBuilder()
             .uri(
                 new URI(
-                    "https://api.census.gov/data/2010/dec/sf1?get=NAME,S2802_C03_022EE&for=county:"
+                    "https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"
                         + county
-                        + "&in=state:"
+                        + "&in=state:06"
                         + code))
             .GET()
             .build();
