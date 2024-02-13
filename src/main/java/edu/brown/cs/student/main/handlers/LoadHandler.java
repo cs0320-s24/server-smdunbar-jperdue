@@ -40,6 +40,8 @@ public class LoadHandler implements Route {
   @Override
   public Object handle(Request request, Response response) {
 
+    state.clearData(); // assumes headers false until changes
+
     if (request.queryParams("filepath") != null) {
       StringListStrategy sls = new StringListStrategy();
       try {

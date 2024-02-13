@@ -33,9 +33,9 @@ public class ViewHandler implements Route {
 
     if (data != null) {
       List<List<String>> results = this.state.getCsvData();
-      return new ViewSuccessResponse(results);
+      return new ViewSuccessResponse(results).serialize();
     }
-    return new ViewFailureResponse("No CSV loaded. Please Load before Viewing.");
+    return new ViewFailureResponse("No CSV loaded. Please Load before Viewing.").serialize();
   }
 
   /**

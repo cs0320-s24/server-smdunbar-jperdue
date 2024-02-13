@@ -40,14 +40,14 @@ public class Server {
     //      System.err.println("Errored while deserializing the menu");
     //    }
 
-    StateCodes stateMap = new StateCodes();
+//    StateCodes stateMap = new StateCodes();
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-    Spark.get("broadband", new BroadbandHandler(stateMap));
+//    Spark.get("broadband", new BroadbandHandler(stateMap));
 
     Spark.init();
     Spark.awaitInitialization();
