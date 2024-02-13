@@ -16,7 +16,7 @@ import java.util.List;
 
 public class StateCodes {
 
-  private final List<StateCodePair> codes;
+  private final List<List<String>> codes;
 
   public StateCodes() throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildStateListRequest =
@@ -30,26 +30,20 @@ public class StateCodes {
         HttpClient.newBuilder()
             .build()
             .send(buildStateListRequest, HttpResponse.BodyHandlers.ofString());
-
-    // What's the difference between these two lines? Why do we return the body? What is useful from
-    // the raw response (hint: how can we use the status of response)?
-    System.out.println(stateListResponse);
-    System.out.println(stateListResponse.body());
-
     this.codes = deserializeStates(stateListResponse.body());
   }
 
   public int getCode(String state) {
-    for (StateCodePair pair : this.codes) {
-      if (pair.getState().equals(state)) {
-        return pair.getStateCode();
+    for (List<String> list : this.codes) {
+      if (list.get(0).equals(state)) {
+        return Integer.parseInt(list.get(0));
       }
     }
     throw new IllegalArgumentException("State " + state + " does not exist");
   }
 
-  public static List<StateCodePair> deserializeStates(String jsonList) throws IOException {
-    List<StateCodePair> menu = new ArrayList<>();
+  public static List<List<String>> deserializeStates(String jsonList) throws IOException {
+    List<List<String>> menu = new ArrayList<>();
     try {
       Moshi moshi = new Moshi.Builder().build(); // don't care what's happening here
       // notice the type and JSONAdapter parameterized type match the return type of the method
@@ -60,10 +54,10 @@ public class StateCodes {
       // Moshi docs'
       // template by creating a Type object corresponding to List<Ingredient>:
       Type listType =
-          Types.newParameterizedType(List.class, StateCodePair.class); // nesting outside to inside
-      JsonAdapter<List<StateCodePair>> adapter = moshi.adapter(listType);
+          Types.newParameterizedType(List.class, List.class); // nesting outside to inside
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listType);
 
-      List<StateCodePair> deserializedStates = adapter.fromJson(jsonList);
+      List<List<String>> deserializedStates = adapter.fromJson(jsonList);
 
       return deserializedStates;
     }
