@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.acsData;
+package edu.brown.cs.student.main.codes;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;

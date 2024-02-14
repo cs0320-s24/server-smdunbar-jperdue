@@ -4,7 +4,7 @@ import static spark.Spark.after;
 
 import edu.brown.cs.student.main.acsData.CachingCensusData;
 import edu.brown.cs.student.main.acsData.CensusAPI;
-import edu.brown.cs.student.main.acsData.StateCodes;
+import edu.brown.cs.student.main.codes.StateCodes;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
 import edu.brown.cs.student.main.handlers.SearchHandler;

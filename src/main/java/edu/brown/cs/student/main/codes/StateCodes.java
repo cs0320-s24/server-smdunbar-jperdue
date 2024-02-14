@@ -1,21 +1,15 @@
-package edu.brown.cs.student.main.acsData;
+package edu.brown.cs.student.main.codes;
 
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.JsonDataException;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StateCodes extends Codes{
+public class StateCodes extends Codes {
 
   private final List<List<String>> codes;
   private final HashMap<String,String> stateMap;

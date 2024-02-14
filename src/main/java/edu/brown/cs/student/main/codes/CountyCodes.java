@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.acsData;
+package edu.brown.cs.student.main.codes;
 
 import java.io.IOException;
 import java.net.URI;
@@ -9,7 +9,7 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 
-public class CountyCodes extends Codes{
+public class CountyCodes extends Codes {
   private final List<List<String>> countyCodes;
   private final StateCodes stateCodes;
 

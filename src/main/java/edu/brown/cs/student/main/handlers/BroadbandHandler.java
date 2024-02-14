@@ -1,20 +1,10 @@
 package edu.brown.cs.student.main.handlers;
 
 import edu.brown.cs.student.main.acsData.ACSDatasource;
-import edu.brown.cs.student.main.acsData.CensusAPI;
-import edu.brown.cs.student.main.acsData.StateCodes;
 import edu.brown.cs.student.main.acsData.StateInfoUtilities;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import spark.Request;
 import spark.Response;
 import spark.Route;

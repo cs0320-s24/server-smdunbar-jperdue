@@ -1,17 +1,13 @@
 package edu.brown.cs.student.main.acsData;
 
+import edu.brown.cs.student.main.codes.CountyCodes;
+import edu.brown.cs.student.main.codes.StateCodes;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import org.jetbrains.annotations.NotNull;
 
 public class CensusAPI implements ACSDatasource{
 
