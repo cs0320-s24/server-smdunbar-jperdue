@@ -22,9 +22,6 @@ public class StateInfoUtilities {
 
       return stateInfo;
     }
-    // Returns an empty activity... Probably not the best handling of this error case...
-    // Notice an alternative error throwing case to the one done in OrderHandler. This catches
-    // the error instead of pushing it up.
     catch (IOException e) {
       e.printStackTrace();
       return new ArrayList();

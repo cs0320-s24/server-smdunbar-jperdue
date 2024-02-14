@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.acsData.CachingCensusData;
 import edu.brown.cs.student.main.acsData.CensusAPI;
 import edu.brown.cs.student.main.acsData.StateCodes;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
@@ -42,14 +43,15 @@ public class Server {
     //    }
 
     StateCodes stateMap = new StateCodes();
-    CensusAPI censusAPI = new CensusAPI();
+    //deal with this not being defensive to pass in later^^ editable?
+    CachingCensusData cachedCensusAPI = new CachingCensusData(new CensusAPI(stateMap),10,1);
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-    Spark.get("broadband", new BroadbandHandler(censusAPI,stateMap));
+    Spark.get("broadband", new BroadbandHandler(cachedCensusAPI));
 
     Spark.init();
     Spark.awaitInitialization();

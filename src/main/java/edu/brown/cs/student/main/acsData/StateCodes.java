@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StateCodes {
+public class StateCodes extends Codes{
 
   private final List<List<String>> codes;
   private final HashMap<String,String> stateMap;
@@ -32,7 +32,7 @@ public class StateCodes {
         HttpClient.newBuilder()
             .build()
             .send(buildStateListRequest, HttpResponse.BodyHandlers.ofString());
-    this.codes = deserializeStates(stateListResponse.body());
+    this.codes = deserializeCodes(stateListResponse.body());
     stateMap = new HashMap<>();
     for (List<String> list : this.codes) {
       stateMap.put(list.get(0),list.get(1));
@@ -45,34 +45,6 @@ public class StateCodes {
       return stateMap.get(state);
     } else {
       throw new IllegalArgumentException("State " + state + " does not exist");
-    }
-  }
-
-  public static List<List<String>> deserializeStates(String jsonList) throws IOException {
-    List<List<String>> menu = new ArrayList<>();
-    try {
-      Moshi moshi = new Moshi.Builder().build();
-
-      Type listType =
-          Types.newParameterizedType(List.class, List.class); // nesting outside to inside
-      JsonAdapter<List<List<String>>> adapter = moshi.adapter(listType);
-
-      List<List<String>> deserializedStates = adapter.fromJson(jsonList);
-
-      return deserializedStates;
-    }
-    // From the Moshi Docs (https://github.com/square/moshi):
-    //   "Moshi always throws a standard java.io.IOException if there is an error reading the JSON
-    // document, or if it is malformed. It throws a JsonDataException if the JSON document is
-    // well-formed, but doesn't match the expected format."
-    catch (IOException e) {
-      // In a real system, we wouldn't println like this, but it's useful for demonstration:
-      System.err.println("OrderHandler: string wasn't valid JSON.");
-      throw e;
-    } catch (JsonDataException e) {
-      // In a real system, we wouldn't println like this, but it's useful for demonstration:
-      System.err.println("OrderHandler: JSON wasn't in the right format.");
-      throw e;
     }
   }
 }
