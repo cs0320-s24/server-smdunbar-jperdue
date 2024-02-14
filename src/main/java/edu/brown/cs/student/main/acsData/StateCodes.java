@@ -12,11 +12,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class StateCodes {
 
   private final List<List<String>> codes;
+  private final HashMap<String,String> stateMap;
 
   public StateCodes() throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildStateListRequest =
@@ -31,28 +33,26 @@ public class StateCodes {
             .build()
             .send(buildStateListRequest, HttpResponse.BodyHandlers.ofString());
     this.codes = deserializeStates(stateListResponse.body());
+    stateMap = new HashMap<>();
+    for (List<String> list : this.codes) {
+      stateMap.put(list.get(0),list.get(1));
+    }
+
   }
 
   public String getCode(String state) {
-    for (List<String> list : this.codes) {
-      if (list.get(0).equals(state)) {
-        return list.get(1);
-      }
+    if (stateMap.containsKey(state)){
+      return stateMap.get(state);
+    } else {
+      throw new IllegalArgumentException("State " + state + " does not exist");
     }
-    throw new IllegalArgumentException("State " + state + " does not exist");
   }
 
   public static List<List<String>> deserializeStates(String jsonList) throws IOException {
     List<List<String>> menu = new ArrayList<>();
     try {
-      Moshi moshi = new Moshi.Builder().build(); // don't care what's happening here
-      // notice the type and JSONAdapter parameterized type match the return type of the method
-      // Since List is generic, we shouldn't just pass List.class to the adapter factory.
-      // Instead, let's be more precise. Java has built-in classes for talking about generic types
-      // programmatically.
-      // Building libraries that use them is outside the scope of this class, but we'll follow the
-      // Moshi docs'
-      // template by creating a Type object corresponding to List<Ingredient>:
+      Moshi moshi = new Moshi.Builder().build();
+
       Type listType =
           Types.newParameterizedType(List.class, List.class); // nesting outside to inside
       JsonAdapter<List<List<String>>> adapter = moshi.adapter(listType);

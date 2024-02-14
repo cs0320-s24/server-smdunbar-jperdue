@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.acsData.CensusAPI;
 import edu.brown.cs.student.main.acsData.StateCodes;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
@@ -41,18 +42,17 @@ public class Server {
     //    }
 
     StateCodes stateMap = new StateCodes();
+    CensusAPI censusAPI = new CensusAPI();
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-    Spark.get("broadband", new BroadbandHandler(stateMap));
+    Spark.get("broadband", new BroadbandHandler(censusAPI,stateMap));
 
     Spark.init();
     Spark.awaitInitialization();
-
-    // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);
   }
 }
