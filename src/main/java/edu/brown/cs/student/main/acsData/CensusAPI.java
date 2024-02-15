@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.acsData;
 
 import edu.brown.cs.student.main.codes.CountyCodes;
 import edu.brown.cs.student.main.codes.StateCodes;
+import edu.brown.cs.student.main.api_exceptions.DatasourceException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,15 +20,21 @@ public class CensusAPI implements ACSDatasource {
 
   @Override
   public String getBroadband(String countyCommaState)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws URISyntaxException, IOException, InterruptedException, DatasourceException {
     String[] strArr = countyCommaState.split(",");
     String county = strArr[0];
     String state = strArr[1];
     System.out.println(county);
     System.out.println(state);
     CountyCodes countyCodes = new CountyCodes(stateCodes, state);
-    String countyCode = countyCodes.getCountyCode(county); // CHANGE
-    String stateCode = stateCodes.getCode(state); // CHANGE
+    String countyCode;
+    String stateCode;
+    try {
+      countyCode = countyCodes.getCountyCode(county);
+      stateCode = stateCodes.getCode(state);
+    } catch (IllegalArgumentException e) {
+      throw new DatasourceException("Datasource could not complete request: " + e.getMessage());
+    }
     System.out.println(countyCode);
     System.out.println(stateCode);
     HttpRequest buildApiRequest =

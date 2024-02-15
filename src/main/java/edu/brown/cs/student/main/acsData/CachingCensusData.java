@@ -3,6 +3,8 @@ package edu.brown.cs.student.main.acsData;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import edu.brown.cs.student.main.api_exceptions.DatasourceException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +24,7 @@ public class CachingCensusData implements ACSDatasource {
                 new CacheLoader<>() {
                   @Override
                   public String load(String key)
-                      throws URISyntaxException, IOException, InterruptedException {
+                      throws URISyntaxException, IOException, InterruptedException, DatasourceException {
                     System.out.println("called load for: " + key);
                     // If this isn't yet present in the cache, load it:
                     return original.getBroadband(key);
@@ -31,10 +33,12 @@ public class CachingCensusData implements ACSDatasource {
   }
 
   @Override
-  public String getBroadband(String key) {
-    System.out.println("starting cache work");
-    String result = cache.getUnchecked(key);
-    System.out.println("done cache work");
+  public String getBroadband(String key) throws DatasourceException {
+    String result;
+    try {result = cache.getUnchecked(key);}
+    catch (UncheckedExecutionException e){
+      throw new DatasourceException(e.getMessage().split(": ",2)[1]);
+    }
     return result;
   }
 }

@@ -2,6 +2,11 @@ package edu.brown.cs.student.main.handlers;
 
 import edu.brown.cs.student.main.acsData.ACSDatasource;
 import edu.brown.cs.student.main.acsData.StateInfoUtilities;
+import edu.brown.cs.student.main.api_exceptions.BadJsonException;
+import edu.brown.cs.student.main.api_exceptions.BadRequestException;
+import edu.brown.cs.student.main.api_exceptions.DatasourceException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,27 +23,31 @@ public class BroadbandHandler implements Route {
   }
 
   @Override
-  public Object handle(Request request, Response response) {
+  public Object handle(Request request, Response response)
+      throws URISyntaxException, IOException, InterruptedException {
     String state = request.queryParams("state");
     String county = request.queryParams("county");
+    Map<String, Object> responseMap = new HashMap<>();
+try{
+    if (state == null || county == null){
+      throw new IOException("error_bad_request");
+    }
 
     // Creates a hashmap to store the results of the request
-    Map<String, Object> responseMap = new HashMap<>();
-    try {
+
       // Sends a request to the API and receives JSON back
       String broadbandJson = censusAPI.getBroadband(county + "," + state);
       // Deserializes JSON into an Activity
       List<List> stateInfo = StateInfoUtilities.deserializeStateInfo(broadbandJson);
       // Adds results to the responseMap
       responseMap.put("result", "success");
+      responseMap.put("state",state);
+      responseMap.put("county", county);
       responseMap.put("broadband", stateInfo.get(1).get(1));
       return responseMap;
-    } catch (Exception e) { // catch better exceptions
+    } catch (Exception e) {
       e.printStackTrace();
-      // This is a relatively unhelpful exception message. An important part of this sprint will be
-      // in learning to debug correctly by creating your own informative error messages where Spark
-      // falls short.
-      responseMap.put("result", "Exception");
+      responseMap.put("result", e.getMessage());
     }
     return responseMap;
   }

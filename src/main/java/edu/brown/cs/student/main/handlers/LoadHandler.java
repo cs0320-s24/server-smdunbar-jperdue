@@ -56,7 +56,7 @@ public class LoadHandler implements Route {
 
       } catch (FileNotFoundException e) {
 
-        return new LoadFailureResponse("Provided file not found").serialize();
+        return new LoadFailureResponse("error_datasource: Provided file not found").serialize();
       }
     }
     return new LoadFailureResponse("No filepath provided for loadcsv").serialize();
