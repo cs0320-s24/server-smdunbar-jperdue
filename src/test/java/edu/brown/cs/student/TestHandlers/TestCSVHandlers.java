@@ -1,7 +1,6 @@
 package edu.brown.cs.student.TestHandlers;
 
-import static spark.Spark.after;
-
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.handlers.LoadHandler;
@@ -13,74 +12,71 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import okio.Buffer;
-import org.junit.jupiter.api.*;
+import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import spark.Spark;
 
 public class TestCSVHandlers {
 
-  private static Moshi moshi;
+  private final JsonAdapter<Map<String, Object>> adapter;
+
+  public TestCSVHandlers() {
+    Moshi moshi = new Moshi.Builder().build();
+    Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
+    adapter = moshi.adapter(type);
+  }
 
   @BeforeAll
-  public static void moshiSetup() {
+  public static void setup_before_everything() {
     Spark.port(0);
-    //    Logger.getLogger("").setLevel(Level.WARNING);
-    moshi = new Moshi.Builder().build();
+    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
 
-  /**
-   * Helper method to make API connections and calls when given an endpoint
-   *
-   * @param call API endpoint
-   * @return Map of the response
-   */
-  public Map<String, Object> request(String call) throws IOException {
-
-    URL requestURL = new URL("http://localhost" + Spark.port() + "/" + call);
-    HttpURLConnection connection = (HttpURLConnection) requestURL.openConnection();
-
-    connection.connect();
-
-    Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
-
-    try (Buffer buffer = new Buffer().readFrom(connection.getInputStream())) {
-      Map<String, Object> response =
-          (Map<String, Object>) moshi.adapter(stringObjectMap).fromJson(buffer);
-      connection.disconnect();
-      return response;
-    }
-  }
-
-  /** Setup up server. Run before all tests */
   @BeforeEach
   public void setup() {
-    after(
-        (request, response) -> {
-          response.header("Access-Control-Allow-Origin", "*");
-          response.header("Access-Control-Allow-Methods", "*");
-        });
-
+    // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
-    Spark.get("searchcsv", new SearchHandler(state));
+    // In fact, restart the entire Spark server for every test!
     Spark.get("loadcsv", new LoadHandler(state));
+    Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-
     Spark.init();
-    Spark.awaitInitialization();
+    Spark.awaitInitialization(); // don't continue until the server is listening
   }
 
-  /** Stop endpoints and stop server */
   @AfterEach
   public void teardown() {
-    Spark.unmap("searchcsv");
+    // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadcsv");
+    Spark.unmap("searchcsv");
     Spark.unmap("viewcsv");
-    Spark.awaitStop();
+    Spark.awaitStop(); // don't proceed until the server is stopped
   }
-  //
-  //  @Test
-  //  public void testNoFilepath() throws IOException {
-  //    Map<String, Object> response = request("loadcsv?filepath=badnotapath");
-  //    Assert.assertEquals("error", response.get("result"));
-  //  }
+
+  private static HttpURLConnection tryRequest(String apiCall) throws IOException {
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
+    HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
+
+    clientConnection.setRequestMethod("GET");
+
+    clientConnection.connect();
+    return clientConnection;
+  }
+
+  /** Tests when a csv is successfully loaded to the state */
+  @Test
+  public void testLoadSuccess() throws IOException {
+    tryRequest("loadcsv?path=data/person/personWithHeaders&headers=true");
+    HttpURLConnection clientConnection = tryRequest("loadcsv");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
 }
