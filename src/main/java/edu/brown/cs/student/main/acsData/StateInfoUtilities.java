@@ -21,8 +21,7 @@ public class StateInfoUtilities {
       List<List> stateInfo = adapter.fromJson(json);
 
       return stateInfo;
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
       return new ArrayList();
     }

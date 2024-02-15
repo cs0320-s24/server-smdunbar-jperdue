@@ -9,13 +9,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class CensusAPI implements ACSDatasource{
+public class CensusAPI implements ACSDatasource {
 
-private StateCodes stateCodes;
+  private StateCodes stateCodes;
 
-public CensusAPI(StateCodes sc){
-  this.stateCodes = sc;
-}
+  public CensusAPI(StateCodes sc) {
+    this.stateCodes = sc;
+  }
 
   @Override
   public String getBroadband(String countyCommaState)
@@ -26,8 +26,8 @@ public CensusAPI(StateCodes sc){
     System.out.println(county);
     System.out.println(state);
     CountyCodes countyCodes = new CountyCodes(stateCodes, state);
-    String countyCode = countyCodes.getCountyCode(county); //CHANGE
-    String stateCode = stateCodes.getCode(state); //CHANGE
+    String countyCode = countyCodes.getCountyCode(county); // CHANGE
+    String stateCode = stateCodes.getCode(state); // CHANGE
     System.out.println(countyCode);
     System.out.println(stateCode);
     HttpRequest buildApiRequest =

@@ -12,7 +12,7 @@ import java.util.List;
 public class StateCodes extends Codes {
 
   private final List<List<String>> codes;
-  private final HashMap<String,String> stateMap;
+  private final HashMap<String, String> stateMap;
 
   public StateCodes() throws URISyntaxException, IOException, InterruptedException {
     HttpRequest buildStateListRequest =
@@ -29,13 +29,12 @@ public class StateCodes extends Codes {
     this.codes = deserializeCodes(stateListResponse.body());
     stateMap = new HashMap<>();
     for (List<String> list : this.codes) {
-      stateMap.put(list.get(0),list.get(1));
+      stateMap.put(list.get(0), list.get(1));
     }
-
   }
 
   public String getCode(String state) {
-    if (stateMap.containsKey(state)){
+    if (stateMap.containsKey(state)) {
       return stateMap.get(state);
     } else {
       throw new IllegalArgumentException("State " + state + " does not exist");
