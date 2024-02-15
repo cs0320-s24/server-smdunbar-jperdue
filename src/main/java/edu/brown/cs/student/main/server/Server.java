@@ -43,8 +43,8 @@ public class Server {
     //    }
 
     StateCodes stateMap = new StateCodes();
-    //deal with this not being defensive to pass in later^^ editable?
-    CachingCensusData cachedCensusAPI = new CachingCensusData(new CensusAPI(stateMap),10,1);
+    // deal with this not being defensive to pass in later^^ editable?
+    CachingCensusData cachedCensusAPI = new CachingCensusData(new CensusAPI(stateMap), 10, 1);
 
     ServerState state = new ServerState();
     // Setting up the handler for the GET /order and /activity endpoints

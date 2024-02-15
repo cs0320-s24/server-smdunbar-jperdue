@@ -22,8 +22,7 @@ public class Codes {
       List<List<String>> deserializedStates = adapter.fromJson(jsonList);
 
       return deserializedStates;
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // In a real system, we wouldn't println like this, but it's useful for demonstration:
       System.err.println("OrderHandler: string wasn't valid JSON.");
       throw e;
@@ -33,5 +32,4 @@ public class Codes {
       throw e;
     }
   }
-
 }
