@@ -72,11 +72,164 @@ public class TestCSVHandlers {
   /** Tests when a csv is successfully loaded to the state */
   @Test
   public void testLoadSuccess() throws IOException {
-    tryRequest("loadcsv?path=data/person/personWithHeaders&headers=true");
-    HttpURLConnection clientConnection = tryRequest("loadcsv");
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     Assert.assertEquals("success", response.get("result"));
   }
+
+  /** Tests loadcsv fails due to invalid path*/
+  @Test
+  public void testLoadFailureInvalidPath() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv?filepath=data/person/notAFile&headers=true");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when loadcsv fails due to no path provided*/
+  @Test
+  public void testLoadFailureNoPath() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("loadcsv");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when viewcsv is successful */
+  @Test
+  public void testViewSuccess() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when viewcsv fails as no csv is loaded */
+  @Test
+  public void testViewFailue() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("viewcsv");
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when searchcsv is successful */
+  @Test
+  public void testSearchSuccessNoColumnID() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when searchcsv is successful */
+  @Test
+  public void testSearchSuccessColumnName() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=firstName");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when searchcsv is successful */
+  @Test
+  public void testSearchSuccessColumnIndex() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=0");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when searchcsv is successful */
+  @Test
+  public void testSearchSuccessNoResult() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=James");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+  }
+
+  /** Tests when searchcsv fails because no CSV loaded */
+  @Test
+  public void testSearchFailueNoLoad() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when searchcsv fails searching by header with no headers*/
+  @Test
+  public void testSearchFailureNoHeaders() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=firstName");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when searchcsv fails searching by header and the column doesnt exist*/
+  @Test
+  public void testSearchFailureHeadersNoExist() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=first_Name");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when searchcsv fails searching by header and the index is out of bounds*/
+  @Test
+  public void testSearchFailureIndexOutOfBounds() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=5");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+  /** Tests when searchcsv fails no query provided*/
+  @Test
+  public void testSearchFailureNoQuery() throws IOException {
+    HttpURLConnection clientConnectionLoad = tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+    Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("searchcsv");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+  }
+
+
+
+
+
+
+
 }
