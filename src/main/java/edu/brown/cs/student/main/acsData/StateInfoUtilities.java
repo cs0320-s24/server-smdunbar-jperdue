@@ -14,19 +14,19 @@ import java.util.List;
 public class StateInfoUtilities {
   public static List deserializeStateInfo(String json)
       throws IOException, BadRequestException, BadJsonException {
-      Moshi moshi = new Moshi.Builder().build();
-      try {
-        Type listType = Types.newParameterizedType(List.class, List.class);
+    Moshi moshi = new Moshi.Builder().build();
+    try {
+      Type listType = Types.newParameterizedType(List.class, List.class);
 
-        JsonAdapter<List<List>> adapter = moshi.adapter(listType);
+      JsonAdapter<List<List>> adapter = moshi.adapter(listType);
 
-        List<List> stateInfo = adapter.fromJson(json);
+      List<List> stateInfo = adapter.fromJson(json);
 
-        return stateInfo;
-      }catch (JsonDataException e) {
-        throw new BadJsonException("error_bad_json");
-    } catch (EOFException e){
-        throw new BadRequestException("error_bad_request");
-      }
+      return stateInfo;
+    } catch (JsonDataException e) {
+      throw new BadJsonException("error_bad_json");
+    } catch (EOFException e) {
+      throw new BadRequestException("error_bad_request");
     }
+  }
 }

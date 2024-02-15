@@ -1,8 +1,8 @@
 package edu.brown.cs.student.main.acsData;
 
+import edu.brown.cs.student.main.api_exceptions.DatasourceException;
 import edu.brown.cs.student.main.codes.CountyCodes;
 import edu.brown.cs.student.main.codes.StateCodes;
-import edu.brown.cs.student.main.api_exceptions.DatasourceException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -49,13 +49,13 @@ public class SearchHandler implements Route {
           try { // when column identifier is provided and it's an integer
             List<List<String>> results =
                 UtilitySearch.query(data, query, headers, Integer.parseInt(column));
-            return new SearchSuccessResponse(results,query,column).serialize();
+            return new SearchSuccessResponse(results, query, column).serialize();
 
           } catch (NumberFormatException e) {
 
             try { // when column identifier is not an integer but rather a name
               List<List<String>> results = UtilitySearch.query(data, query, headers, column);
-              return new SearchSuccessResponse(results,query,column).serialize();
+              return new SearchSuccessResponse(results, query, column).serialize();
             } catch (InvalidQueryException iqe) {
               return new SearchFailureResponse(iqe.getMessage()).serialize();
             }
@@ -88,7 +88,8 @@ public class SearchHandler implements Route {
    * @param type success
    * @param data search results
    */
-  public record SearchSuccessResponse(String type, List<List<String>> data,String query,String column) {
+  public record SearchSuccessResponse(
+      String type, List<List<String>> data, String query, String column) {
 
     /**
      * Successful response data
@@ -96,7 +97,7 @@ public class SearchHandler implements Route {
      * @param data csv results from search
      */
     public SearchSuccessResponse(List<List<String>> data, String query, String column) {
-      this("success", data,query,column);
+      this("success", data, query, column);
     }
 
     /**
@@ -108,9 +109,9 @@ public class SearchHandler implements Route {
       Map<String, Object> responseMap = new HashMap<>();
       responseMap.put("result", this.type);
       responseMap.put("query", this.query);
-      if (column !=null) {
+      if (column != null) {
         responseMap.put("column", this.column);
-      }else{
+      } else {
         responseMap.put("column", "all");
       }
       responseMap.put("data", this.data);

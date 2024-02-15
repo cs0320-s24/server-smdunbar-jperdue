@@ -24,7 +24,8 @@ public class CachingCensusData implements ACSDatasource {
                 new CacheLoader<>() {
                   @Override
                   public String load(String key)
-                      throws URISyntaxException, IOException, InterruptedException, DatasourceException {
+                      throws URISyntaxException, IOException, InterruptedException,
+                          DatasourceException {
                     System.out.println("called load for: " + key);
                     // If this isn't yet present in the cache, load it:
                     return original.getBroadband(key);
@@ -35,9 +36,10 @@ public class CachingCensusData implements ACSDatasource {
   @Override
   public String getBroadband(String key) throws DatasourceException {
     String result;
-    try {result = cache.getUnchecked(key);}
-    catch (UncheckedExecutionException e){
-      throw new DatasourceException(e.getMessage().split(": ",2)[1]);
+    try {
+      result = cache.getUnchecked(key);
+    } catch (UncheckedExecutionException e) {
+      throw new DatasourceException(e.getMessage().split(": ", 2)[1]);
     }
     return result;
   }
