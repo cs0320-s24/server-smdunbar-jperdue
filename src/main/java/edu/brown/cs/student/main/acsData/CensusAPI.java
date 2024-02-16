@@ -15,7 +15,6 @@ public class CensusAPI implements ACSDatasource {
   private StateCodes stateCodes;
 
   /**
-   *
    * @param sc is the stateCodes object with all states and codes
    */
   public CensusAPI(StateCodes sc) {
@@ -23,7 +22,6 @@ public class CensusAPI implements ACSDatasource {
   }
 
   /**
-   *
    * @param countyCommaState is the county a comma then the stt=ate provided
    * @return string with broadband data
    * @throws URISyntaxException when the uri is malformed

@@ -14,7 +14,6 @@ public class CachingCensusData implements ACSDatasource {
   private final LoadingCache<String, String> cache;
 
   /**
-   *
    * @param og - original datasource that will be called if the key is not in the cache
    * @param size - maximum size of the cache
    * @param minutes - total time that items stay in the cache
@@ -39,7 +38,8 @@ public class CachingCensusData implements ACSDatasource {
                 });
   }
 
-  /** gets the broadband data for the given key from cache or original datasource(county and state)
+  /**
+   * gets the broadband data for the given key from cache or original datasource(county and state)
    *
    * @param key is the county a comma then the state provided
    * @return String of the broadband data from either the cache or the original datasource

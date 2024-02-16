@@ -4,6 +4,7 @@ public class DatasourceException extends Exception {
 
   /**
    * errors within the datasource
+   *
    * @param message message to be shown to users
    */
   public DatasourceException(String message) {

@@ -14,7 +14,6 @@ import java.util.List;
 public class StateInfoUtilities {
 
   /**
-   *
    * @param json is the json to deserialize
    * @return list<list> of the states and their codes
    * @throws IOException

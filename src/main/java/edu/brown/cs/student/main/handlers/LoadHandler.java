@@ -41,14 +41,14 @@ public class LoadHandler implements Route {
   public Object handle(Request request, Response response) {
 
     state.clearData(); // assumes headers false until changes
-String filepath;
+    String filepath;
     if ((filepath = request.queryParams("filepath")) != null) {
       StringListStrategy sls = new StringListStrategy();
       try {
-        if (!filepath.contains("data/")){
+        if (!filepath.contains("data/")) {
           throw new FileNotFoundException();
         }
-        if (filepath.contains("..")){
+        if (filepath.contains("..")) {
           throw new IllegalArgumentException();
         }
         FileReader reader = new FileReader(request.queryParams("filepath"));
@@ -63,8 +63,9 @@ String filepath;
       } catch (FileNotFoundException e) {
 
         return new LoadFailureResponse("error_datasource: Provided file not found").serialize();
-      } catch (IllegalArgumentException e){
-        return new LoadFailureResponse("error_datasource: Provided filepath out of allowed scope").serialize();
+      } catch (IllegalArgumentException e) {
+        return new LoadFailureResponse("error_datasource: Provided filepath out of allowed scope")
+            .serialize();
       }
     }
     return new LoadFailureResponse("No filepath provided for loadcsv").serialize();

@@ -14,7 +14,8 @@ public class StateCodes extends Codes {
   private final List<List<String>> codes;
   private final HashMap<String, String> stateMap;
 
-  /**queries the datasource once to get and deserialize the state codes json
+  /**
+   * queries the datasource once to get and deserialize the state codes json
    *
    * @throws URISyntaxException
    * @throws IOException

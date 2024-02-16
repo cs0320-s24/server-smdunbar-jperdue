@@ -16,7 +16,8 @@ public class CountyCodes extends Codes {
   private final String state;
   private final HashMap<String, String> countyMap;
 
-  /** queries the datasource once to get and deserialize the county codes json for the given state
+  /**
+   * queries the datasource once to get and deserialize the county codes json for the given state
    *
    * @param sc StateCodes object to loook through
    * @param state state that county is in
@@ -52,6 +53,7 @@ public class CountyCodes extends Codes {
 
   /**
    * gets the county code of the given county
+   *
    * @param county county to find code of
    * @return string of the code
    */

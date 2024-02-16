@@ -20,7 +20,6 @@ public class BroadbandHandler implements Route {
   private ACSDatasource censusAPI;
 
   /**
-   *
    * @param census datasource to use
    */
   public BroadbandHandler(ACSDatasource census) {
@@ -60,14 +59,14 @@ public class BroadbandHandler implements Route {
 
   /**
    * serializes reponse map into json
+   *
    * @param map map to be serialized
    * @return String version of the map
    */
-  private  String serialize(Map<String,Object> map){
+  private String serialize(Map<String, Object> map) {
     Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
-      Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<Map<String, Object>> adapter = moshi.adapter(stringObjectMap);
-      return adapter.toJson(map);
-
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(stringObjectMap);
+    return adapter.toJson(map);
   }
 }

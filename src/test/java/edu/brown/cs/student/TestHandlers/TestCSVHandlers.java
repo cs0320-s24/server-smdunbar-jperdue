@@ -52,11 +52,12 @@ public class TestCSVHandlers {
         });
     // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
+    ACSDatasource mockedSource = new MockedCensusData("93.1");
     // In fact, restart the entire Spark server for every test!
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-
+    Spark.get("broadband", new BroadbandHandler(mockedSource));
 
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
@@ -262,5 +263,53 @@ public class TestCSVHandlers {
     Assert.assertEquals("failure", response.get("result"));
     clientConnection.disconnect();
   }
+  /** Tests with mock that requsst work */
+  @Test
+  public void testBroadbandSuccess() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Orange%20County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1", response.get("broadband"));
 
+    clientConnection.disconnect();
+  }
+  /** Tests with mock that requsst work */
+  @Test
+  public void testBroadbandSuccess2() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Yellow%20County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1", response.get("broadband"));
+
+    clientConnection.disconnect();
+  }
+  /** Tests with mock that requsst work */
+  @Test
+  public void testBroadbandSuccess3() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Purple%20County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1", response.get("broadband"));
+
+    clientConnection.disconnect();
+  }
+  /** Tests with mock bad request */
+  @Test
+  public void testBroadbandBadRequest() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("broadband");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
+    clientConnection.disconnect();
+  }
 }
