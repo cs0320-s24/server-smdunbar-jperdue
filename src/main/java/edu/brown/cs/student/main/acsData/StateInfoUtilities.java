@@ -12,6 +12,15 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class StateInfoUtilities {
+
+  /**
+   *
+   * @param json is the json to deserialize
+   * @return list<list> of the states and their codes
+   * @throws IOException
+   * @throws BadRequestException if request is malformed
+   * @throws BadJsonException if the json is incorrect
+   */
   public static List deserializeStateInfo(String json)
       throws IOException, BadRequestException, BadJsonException {
     Moshi moshi = new Moshi.Builder().build();

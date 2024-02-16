@@ -14,10 +14,23 @@ public class CensusAPI implements ACSDatasource {
 
   private StateCodes stateCodes;
 
+  /**
+   *
+   * @param sc is the stateCodes object with all states and codes
+   */
   public CensusAPI(StateCodes sc) {
     this.stateCodes = sc;
   }
 
+  /**
+   *
+   * @param countyCommaState is the county a comma then the stt=ate provided
+   * @return string with broadband data
+   * @throws URISyntaxException when the uri is malformed
+   * @throws IOException on incorrect user input
+   * @throws InterruptedException
+   * @throws DatasourceException to propagate datasource errors
+   */
   @Override
   public String getBroadband(String countyCommaState)
       throws URISyntaxException, IOException, InterruptedException, DatasourceException {

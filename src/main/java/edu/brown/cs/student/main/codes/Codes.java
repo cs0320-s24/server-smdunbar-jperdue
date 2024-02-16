@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Codes {
+
+  /**
+   *  deserializes json into list<list<strings>>
+   * @param jsonList list to be deserialized
+   * @return list<list<strings>> of codes and states or counties
+   * @throws IOException
+   */
   public static List<List<String>> deserializeCodes(String jsonList) throws IOException {
     List<List<String>> menu = new ArrayList<>();
     try {

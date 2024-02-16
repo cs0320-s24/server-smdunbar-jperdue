@@ -19,6 +19,10 @@ public class BroadbandHandler implements Route {
 
   private ACSDatasource censusAPI;
 
+  /**
+   *
+   * @param census datasource to use
+   */
   public BroadbandHandler(ACSDatasource census) {
     this.censusAPI = census;
   }
@@ -54,6 +58,11 @@ public class BroadbandHandler implements Route {
     return serialize(responseMap);
   }
 
+  /**
+   * serializes reponse map into json
+   * @param map map to be serialized
+   * @return String version of the map
+   */
   private  String serialize(Map<String,Object> map){
     Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
       Moshi moshi = new Moshi.Builder().build();
