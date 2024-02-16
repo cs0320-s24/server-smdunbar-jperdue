@@ -1,10 +1,13 @@
 package edu.brown.cs.student.TestHandlers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static spark.Spark.after;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.acsData.ACSDatasource;
+import edu.brown.cs.student.main.handlers.BroadbandHandler;
 import edu.brown.cs.student.main.handlers.LoadHandler;
 import edu.brown.cs.student.main.handlers.SearchHandler;
 import edu.brown.cs.student.main.handlers.ViewHandler;
@@ -50,9 +53,12 @@ public class TestCSVHandlers {
     // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
     // In fact, restart the entire Spark server for every test!
+    ACSDatasource mockedSource = new MockedCensusData("93.1");
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
+    Spark.get("broadband", new BroadbandHandler(mockedSource));
+
 
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
@@ -256,6 +262,21 @@ public class TestCSVHandlers {
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     Assert.assertEquals("failure", response.get("result"));
+    clientConnection.disconnect();
+  }
+  @Test
+  public void testMockSuccess() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Orange County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1",
+        response.get("broadband"));
+    // Notice we had to do something strange above, because the map is
+    // from String to *Object*. Awkward testing caused by poor API design...
+
     clientConnection.disconnect();
   }
 }

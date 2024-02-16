@@ -49,15 +49,5 @@ public class BroadbandHandler implements Route {
     }
 
     return responseMap;
-
-    //    Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
-    //    try {
-    //      Moshi moshi = new Moshi.Builder().build();
-    //      JsonAdapter<Map<String, Object>> adapter = moshi.adapter(stringObjectMap);
-    //      return adapter.toJson(responseMap);
-    //    } catch (Exception e) {
-    //      e.printStackTrace();
-    //      throw e;
-    //    }
   }
 }
