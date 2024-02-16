@@ -263,60 +263,46 @@ public class TestCSVHandlers {
     clientConnection.disconnect();
   }
 
-  /**
-   * Tests interactions between load and search
-   */
+  /** Tests interactions between load and search */
   @Test
   public void testLoadSearchInteractions() throws IOException {
     HttpURLConnection clientConnectionLoad =
-            tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
+        tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=firstName");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> response =
-            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     Assert.assertEquals("failure", response.get("result"));
 
-
     HttpURLConnection clientConnectionSecondLoad =
-            tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionSecondLoad.getResponseCode());
     HttpURLConnection clientConnectionSecond = tryRequest("searchcsv?query=Jim&column=firstName");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> responseSecond =
-            adapter.fromJson(new Buffer().readFrom(clientConnectionSecond.getInputStream()));
+        adapter.fromJson(new Buffer().readFrom(clientConnectionSecond.getInputStream()));
     Assert.assertEquals("success", responseSecond.get("result"));
     clientConnection.disconnect();
   }
 
-  /**
-   * Tests load and view interactions
-   */
+  /** Tests load and view interactions */
   @Test
   public void testLoadViewInteractions() throws IOException {
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     Map<String, Object> response =
-            adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     Assert.assertEquals("failure", response.get("result"));
     clientConnection.disconnect();
 
     HttpURLConnection clientConnectionLoad =
-            tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnectionSecond = tryRequest("viewcsv");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> responseSecond =
-            adapter.fromJson(new Buffer().readFrom(clientConnectionSecond.getInputStream()));
+        adapter.fromJson(new Buffer().readFrom(clientConnectionSecond.getInputStream()));
     Assert.assertEquals("success", responseSecond.get("result"));
     clientConnection.disconnect();
-
-
   }
-
-
-
-
-
-
-
 }
