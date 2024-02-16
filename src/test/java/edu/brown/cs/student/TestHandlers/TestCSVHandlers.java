@@ -22,6 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
 
+import static spark.Spark.after;
+
 public class TestCSVHandlers {
 
   private final JsonAdapter<Map<String, Object>> adapter;
@@ -40,12 +42,18 @@ public class TestCSVHandlers {
 
   @BeforeEach
   public void setup() {
+    after(
+            (request, response) -> {
+              response.header("Access-Control-Allow-Origin", "*");
+              response.header("Access-Control-Allow-Methods", "*");
+            });
     // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
     // In fact, restart the entire Spark server for every test!
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
+
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
   }
