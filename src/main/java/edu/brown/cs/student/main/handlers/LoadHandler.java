@@ -41,11 +41,17 @@ public class LoadHandler implements Route {
   public Object handle(Request request, Response response) {
 
     state.clearData(); // assumes headers false until changes
-
-    if (request.queryParams("filepath") != null) {
+String filepath;
+    if ((filepath = request.queryParams("filepath")) != null) {
       StringListStrategy sls = new StringListStrategy();
       try {
-        FileReader reader = new FileReader("data/"+request.queryParams("filepath"));
+        if (!filepath.contains("data/")){
+          throw new FileNotFoundException();
+        }
+        if (filepath.contains("..")){
+          throw new IllegalArgumentException();
+        }
+        FileReader reader = new FileReader(request.queryParams("filepath"));
         Parser parser = new Parser(reader, sls);
         ArrayList<List<String>> data = parser.parse();
         this.state.setCsvData(data);
