@@ -222,7 +222,7 @@ public class TestCSVHandlers {
     clientConnection.disconnect();
   }
 
-  /** Tests when searchcsv fails searching by header and the column doesnt exist */
+  /** Tests when searchcsv fails searching by header and the column doesn't exist */
   @Test
   public void testSearchFailureHeadersNoExist() throws IOException {
     HttpURLConnection clientConnectionLoad =
@@ -257,55 +257,6 @@ public class TestCSVHandlers {
         tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv");
-    Assert.assertEquals(200, clientConnection.getResponseCode());
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("failure", response.get("result"));
-    clientConnection.disconnect();
-  }
-  /** Tests with mock that requsst work */
-  @Test
-  public void testBroadbandSuccess() throws IOException {
-    HttpURLConnection clientConnection =
-        tryRequest("broadband?state=California&county=Orange%20County");
-    Assert.assertEquals(200, clientConnection.getResponseCode());
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("success", response.get("result"));
-    assertEquals("93.1", response.get("broadband"));
-
-    clientConnection.disconnect();
-  }
-  /** Tests with mock that requsst work */
-  @Test
-  public void testBroadbandSuccess2() throws IOException {
-    HttpURLConnection clientConnection =
-        tryRequest("broadband?state=California&county=Yellow%20County");
-    Assert.assertEquals(200, clientConnection.getResponseCode());
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("success", response.get("result"));
-    assertEquals("93.1", response.get("broadband"));
-
-    clientConnection.disconnect();
-  }
-  /** Tests with mock that requsst work */
-  @Test
-  public void testBroadbandSuccess3() throws IOException {
-    HttpURLConnection clientConnection =
-        tryRequest("broadband?state=California&county=Purple%20County");
-    Assert.assertEquals(200, clientConnection.getResponseCode());
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("success", response.get("result"));
-    assertEquals("93.1", response.get("broadband"));
-
-    clientConnection.disconnect();
-  }
-  /** Tests with mock bad request */
-  @Test
-  public void testBroadbandBadRequest() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("broadband");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));

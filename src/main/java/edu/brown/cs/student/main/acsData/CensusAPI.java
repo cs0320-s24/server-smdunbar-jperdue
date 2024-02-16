@@ -35,8 +35,6 @@ public class CensusAPI implements ACSDatasource {
     String[] strArr = countyCommaState.split(",");
     String county = strArr[0];
     String state = strArr[1];
-    System.out.println(county);
-    System.out.println(state);
     CountyCodes countyCodes = new CountyCodes(stateCodes, state);
     String countyCode;
     String stateCode;
@@ -46,8 +44,6 @@ public class CensusAPI implements ACSDatasource {
     } catch (IllegalArgumentException e) {
       throw new DatasourceException("Datasource could not complete request: " + e.getMessage());
     }
-    System.out.println(countyCode);
-    System.out.println(stateCode);
     HttpRequest buildApiRequest =
         HttpRequest.newBuilder()
             .uri(
@@ -65,8 +61,6 @@ public class CensusAPI implements ACSDatasource {
 
     // What's the difference between these two lines? Why do we return the body? What is useful from
     // the raw response (hint: how can we use the status of response)?
-    System.out.println(sentApiResponse);
-    System.out.println(sentApiResponse.body());
     return sentApiResponse.body();
   }
 }
