@@ -1,5 +1,7 @@
 package edu.brown.cs.student.TestHandlers;
 
+import static spark.Spark.after;
+
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -22,8 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
 
-import static spark.Spark.after;
-
 public class TestCSVHandlers {
 
   private final JsonAdapter<Map<String, Object>> adapter;
@@ -43,10 +43,10 @@ public class TestCSVHandlers {
   @BeforeEach
   public void setup() {
     after(
-            (request, response) -> {
-              response.header("Access-Control-Allow-Origin", "*");
-              response.header("Access-Control-Allow-Methods", "*");
-            });
+        (request, response) -> {
+          response.header("Access-Control-Allow-Origin", "*");
+          response.header("Access-Control-Allow-Methods", "*");
+        });
     // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
     // In fact, restart the entire Spark server for every test!
@@ -81,7 +81,7 @@ public class TestCSVHandlers {
   @Test
   public void testLoadSuccess() throws IOException {
     HttpURLConnection clientConnection =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
@@ -116,7 +116,7 @@ public class TestCSVHandlers {
   @Test
   public void testViewSuccess() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -128,11 +128,11 @@ public class TestCSVHandlers {
 
   /** Tests when viewcsv fails as no csv is loaded */
   @Test
-  public void testViewFailue() throws IOException {
+  public void testViewFailure() throws IOException {
     HttpURLConnection clientConnection = tryRequest("viewcsv");
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("success", response.get("result"));
+    Assert.assertEquals("failure", response.get("result"));
     clientConnection.disconnect();
   }
 
@@ -140,7 +140,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchSuccessNoColumnID() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -154,7 +154,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchSuccessColumnName() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=firstName");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -168,7 +168,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchSuccessColumnIndex() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=0");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -182,7 +182,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchSuccessNoResult() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithHeaders&headers=true");
+        tryRequest("loadcsv?filepath=data/personal/personWithHeaders.csv&headers=true");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=James");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -207,7 +207,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchFailureNoHeaders() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+        tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=firstName");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -221,7 +221,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchFailureHeadersNoExist() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+        tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=first_Name");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -235,7 +235,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchFailureIndexOutOfBounds() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+        tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv?query=Jim&column=5");
     Assert.assertEquals(200, clientConnection.getResponseCode());
@@ -249,7 +249,7 @@ public class TestCSVHandlers {
   @Test
   public void testSearchFailureNoQuery() throws IOException {
     HttpURLConnection clientConnectionLoad =
-        tryRequest("loadcsv?filepath=data/person/personWithoutHeaders&headers=false");
+        tryRequest("loadcsv?filepath=data/personal/personWithoutHeaders.csv&headers=false");
     Assert.assertEquals(200, clientConnectionLoad.getResponseCode());
     HttpURLConnection clientConnection = tryRequest("searchcsv");
     Assert.assertEquals(200, clientConnection.getResponseCode());
