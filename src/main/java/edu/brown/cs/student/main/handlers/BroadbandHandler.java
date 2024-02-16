@@ -1,8 +1,12 @@
 package edu.brown.cs.student.main.handlers;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.acsData.ACSDatasource;
 import edu.brown.cs.student.main.acsData.StateInfoUtilities;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +45,20 @@ public class BroadbandHandler implements Route {
       responseMap.put("state", state);
       responseMap.put("county", county);
       responseMap.put("broadband", stateInfo.get(1).get(1));
-      return responseMap;
+      return serialize(responseMap);
     } catch (Exception e) {
-      e.printStackTrace();
       responseMap.put("result", "failure");
       responseMap.put("message", e.getMessage());
     }
 
-    return responseMap;
+    return serialize(responseMap);
+  }
+
+  private  String serialize(Map<String,Object> map){
+    Type stringObjectMap = Types.newParameterizedType(Map.class, String.class, Object.class);
+      Moshi moshi = new Moshi.Builder().build();
+      JsonAdapter<Map<String, Object>> adapter = moshi.adapter(stringObjectMap);
+      return adapter.toJson(map);
+
   }
 }

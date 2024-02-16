@@ -47,6 +47,7 @@ public class TestMock {
   public void setup() {
     ACSDatasource mockedSource = new MockedCensusData("93.1");
     Spark.get("broadband", new BroadbandHandler(mockedSource));
+    Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
 
   }
@@ -70,18 +71,26 @@ public class TestMock {
 
   /** Tests when a csv is successfully loaded to the state */
   @Test
-  public void testLoadSuccess() throws IOException {
+  public void testBroadbandSuccess() throws IOException {
     HttpURLConnection clientConnection =
-        tryRequest("broadband?state=California&county=Orange County");
+        tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     Assert.assertEquals("success", response.get("result"));
     assertEquals("93.1",
         response.get("broadband"));
-    // Notice we had to do something strange above, because the map is
-    // from String to *Object*. Awkward testing caused by poor API design...
 
+    clientConnection.disconnect();
+  }
+  @Test
+  public void testBroadbandBadRequest() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("failure", response.get("result"));
     clientConnection.disconnect();
   }
 }

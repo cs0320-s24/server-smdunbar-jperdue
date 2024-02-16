@@ -53,11 +53,9 @@ public class TestCSVHandlers {
     // Re-initialize state, etc. for _every_ test method run
     ServerState state = new ServerState();
     // In fact, restart the entire Spark server for every test!
-    ACSDatasource mockedSource = new MockedCensusData("93.1");
     Spark.get("loadcsv", new LoadHandler(state));
     Spark.get("searchcsv", new SearchHandler(state));
     Spark.get("viewcsv", new ViewHandler(state));
-    Spark.get("broadband", new BroadbandHandler(mockedSource));
 
 
     Spark.init();
@@ -264,19 +262,5 @@ public class TestCSVHandlers {
     Assert.assertEquals("failure", response.get("result"));
     clientConnection.disconnect();
   }
-  @Test
-  public void testMockSuccess() throws IOException {
-    HttpURLConnection clientConnection =
-        tryRequest("broadband?state=California&county=Orange County");
-    Assert.assertEquals(200, clientConnection.getResponseCode());
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-    Assert.assertEquals("success", response.get("result"));
-    assertEquals("93.1",
-        response.get("broadband"));
-    // Notice we had to do something strange above, because the map is
-    // from String to *Object*. Awkward testing caused by poor API design...
 
-    clientConnection.disconnect();
-  }
 }

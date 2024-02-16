@@ -16,6 +16,6 @@ public class MockedCensusData implements ACSDatasource {
   @Override
   public String getBroadband(String countyCommaState)
       throws URISyntaxException, IOException, InterruptedException, DatasourceException {
-    return "mock successful for "+ this.broadband;
+    return "[[\"name\",\"broadband\",\"state\",\"county\"],[\""+countyCommaState+"\",\""+this.broadband+"\",\"cCode\",\"sCode\"]]";
   }
 }
