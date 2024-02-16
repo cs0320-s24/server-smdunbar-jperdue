@@ -59,4 +59,8 @@ public class CachingCensusData implements ACSDatasource {
   public long getCacheSize() {
     return cache.size();
   }
+
+  public String getStats() {
+    return cache.stats().toString();
+  }
 }

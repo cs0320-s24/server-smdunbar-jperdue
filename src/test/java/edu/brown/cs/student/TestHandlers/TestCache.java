@@ -5,12 +5,9 @@ import static spark.Spark.after;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
-import edu.brown.cs.student.main.acsData.ACSDatasource;
 import edu.brown.cs.student.main.acsData.CachingCensusData;
-import edu.brown.cs.student.main.acsData.CensusAPI;
 import edu.brown.cs.student.main.codes.StateCodes;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
-import edu.brown.cs.student.main.server.ServerState;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -30,7 +27,7 @@ public class TestCache {
 
   private final JsonAdapter<Map<String, Object>> adapter;
   StateCodes stateMap = new StateCodes();
-  CachingCensusData cachedCensusAPI = new CachingCensusData(new CensusAPI(stateMap), 5, 1);
+  CachingCensusData cachedCensusAPI;
 
   public TestCache() throws URISyntaxException, IOException, InterruptedException {
     Moshi moshi = new Moshi.Builder().build();
@@ -52,21 +49,19 @@ public class TestCache {
           response.header("Access-Control-Allow-Methods", "*");
         });
     // Re-initialize state, etc. for _every_ test method run
-    ServerState state = new ServerState();
-    ACSDatasource mockedSource = new MockedCensusData("93.1");
-    // In fact, restart the entire Spark server for every test!
-    Spark.get("broadband", new BroadbandHandler(cachedCensusAPI));
+    this.cachedCensusAPI = new CachingCensusData(new MockedCensusData("93"), 5, 1);
+    Spark.get("broadband", new BroadbandHandler(this.cachedCensusAPI));
 
     Spark.init();
-    Spark.awaitInitialization(); // don't continue until the server is listening
+    Spark.awaitInitialization();
+    // In fact, restart the entire Spark server for every test!
+    // don't continue until the server is listening
   }
 
   @AfterEach
   public void teardown() {
     // Gracefully stop Spark listening on both endpoints after each test
-    Spark.unmap("loadcsv");
-    Spark.unmap("searchcsv");
-    Spark.unmap("viewcsv");
+    Spark.unmap("broadband");
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
 
@@ -83,24 +78,35 @@ public class TestCache {
   /** Tests that the cache stores and recalls items */
   @Test
   public void testCache1() throws IOException {
+
     HttpURLConnection clientConnection =
         tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection.getResponseCode());
-    Assert.assertEquals(1, this.cachedCensusAPI.getCacheSize());
+    Assert.assertEquals(
+        "CacheStats{hitCount=0, missCount=1, loadSuccessCount=1, loadExceptionCount=0",
+        this.cachedCensusAPI
+            .getStats()
+            .substring(0, this.cachedCensusAPI.getStats().indexOf(", totalLoadTime")));
 
     HttpURLConnection clientConnection2 =
         tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection2.getResponseCode());
     Assert.assertEquals(1, this.cachedCensusAPI.getCacheSize());
+    System.out.println(this.cachedCensusAPI.getStats());
     HttpURLConnection clientConnection3 =
         tryRequest("broadband?state=California&county=Kings%20County");
     Assert.assertEquals(200, clientConnection3.getResponseCode());
     Assert.assertEquals(2, this.cachedCensusAPI.getCacheSize());
+    System.out.println(this.cachedCensusAPI.getStats());
     HttpURLConnection clientConnection4 =
         tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection4.getResponseCode());
     Assert.assertEquals(2, this.cachedCensusAPI.getCacheSize());
+    System.out.println(this.cachedCensusAPI.getStats());
     clientConnection.disconnect();
+    clientConnection2.disconnect();
+    clientConnection3.disconnect();
+    clientConnection4.disconnect();
   }
   /** tests that the cache removes items after 5 items are reached */
   @Test
@@ -108,7 +114,11 @@ public class TestCache {
     HttpURLConnection clientConnection =
         tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection.getResponseCode());
-    Assert.assertEquals(1, this.cachedCensusAPI.getCacheSize());
+    Assert.assertEquals(
+        "CacheStats{hitCount=0, missCount=1, loadSuccessCount=1, loadExceptionCount=0",
+        this.cachedCensusAPI
+            .getStats()
+            .substring(0, this.cachedCensusAPI.getStats().indexOf(", totalLoadTime")));
 
     HttpURLConnection clientConnection2 =
         tryRequest("broadband?state=California&county=Napa%20County");
@@ -131,6 +141,11 @@ public class TestCache {
     Assert.assertEquals(200, clientConnection6.getResponseCode());
     Assert.assertEquals(5, this.cachedCensusAPI.getCacheSize());
     clientConnection.disconnect();
+    clientConnection5.disconnect();
+    clientConnection2.disconnect();
+    clientConnection3.disconnect();
+    clientConnection4.disconnect();
+    clientConnection6.disconnect();
   }
   /** tests that the cache removes items after a minute */
   @Test
@@ -145,5 +160,6 @@ public class TestCache {
     Assert.assertEquals(200, clientConnection2.getResponseCode());
     Assert.assertEquals(1, this.cachedCensusAPI.getCacheSize());
     clientConnection.disconnect();
+    clientConnection2.disconnect();
   }
 }
