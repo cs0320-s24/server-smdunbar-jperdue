@@ -1,17 +1,12 @@
 package edu.brown.cs.student.TestHandlers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static spark.Spark.after;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.acsData.ACSDatasource;
 import edu.brown.cs.student.main.handlers.BroadbandHandler;
-import edu.brown.cs.student.main.handlers.LoadHandler;
-import edu.brown.cs.student.main.handlers.SearchHandler;
-import edu.brown.cs.student.main.handlers.ViewHandler;
-import edu.brown.cs.student.main.server.ServerState;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -69,7 +64,7 @@ public class TestMock {
     return clientConnection;
   }
 
-  /** Tests when a csv is successfully loaded to the state */
+  /** Tests with mock that requsst work */
   @Test
   public void testBroadbandSuccess() throws IOException {
     HttpURLConnection clientConnection =
@@ -83,6 +78,35 @@ public class TestMock {
 
     clientConnection.disconnect();
   }
+  /** Tests with mock that requsst work */
+  @Test
+  public void testBroadbandSuccess2() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Yellow%20County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1",
+        response.get("broadband"));
+
+    clientConnection.disconnect();
+  }
+  /** Tests with mock that requsst work */
+  @Test
+  public void testBroadbandSuccess3() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("broadband?state=California&county=Purple%20County");
+    Assert.assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    Assert.assertEquals("success", response.get("result"));
+    assertEquals("93.1",
+        response.get("broadband"));
+
+    clientConnection.disconnect();
+  }
+  /** Tests with mock bad request */
   @Test
   public void testBroadbandBadRequest() throws IOException {
     HttpURLConnection clientConnection =
