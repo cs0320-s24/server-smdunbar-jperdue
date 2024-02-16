@@ -45,7 +45,7 @@ public class LoadHandler implements Route {
     if (request.queryParams("filepath") != null) {
       StringListStrategy sls = new StringListStrategy();
       try {
-        FileReader reader = new FileReader(request.queryParams("filepath"));
+        FileReader reader = new FileReader("data/"+request.queryParams("filepath"));
         Parser parser = new Parser(reader, sls);
         ArrayList<List<String>> data = parser.parse();
         this.state.setCsvData(data);
@@ -57,6 +57,8 @@ public class LoadHandler implements Route {
       } catch (FileNotFoundException e) {
 
         return new LoadFailureResponse("error_datasource: Provided file not found").serialize();
+      } catch (IllegalArgumentException e){
+        return new LoadFailureResponse("error_datasource: Provided filepath out of allowed scope").serialize();
       }
     }
     return new LoadFailureResponse("No filepath provided for loadcsv").serialize();
