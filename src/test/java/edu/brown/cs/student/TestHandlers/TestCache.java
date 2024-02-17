@@ -153,7 +153,11 @@ public class TestCache {
     HttpURLConnection clientConnection =
         tryRequest("broadband?state=California&county=Orange%20County");
     Assert.assertEquals(200, clientConnection.getResponseCode());
-    Assert.assertEquals(1, this.cachedCensusAPI.getCacheSize());
+    Assert.assertEquals(
+        "CacheStats{hitCount=0, missCount=1, loadSuccessCount=1, loadExceptionCount=0",
+        this.cachedCensusAPI
+            .getStats()
+            .substring(0, this.cachedCensusAPI.getStats().indexOf(", totalLoadTime")));
     Thread.sleep(60000);
     HttpURLConnection clientConnection2 =
         tryRequest("broadband?state=California&county=Orange%20County");
